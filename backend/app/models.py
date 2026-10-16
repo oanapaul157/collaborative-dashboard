@@ -32,13 +32,20 @@ class Board(Base):
     )
 
     owner: Mapped[User] = relationship()
-    # cascade="all, delete-orphan": when you delete a Board through the ORM,
-    # SQLAlchemy deletes its memberships too (the Python-side twin of ON DELETE CASCADE).
+    # delete, together with passive_deletes=True: when a board is deleted, 
+    # SQLAlchemy deletes the children itself only if they're already loaded in the session. 
+    # Children that aren't loaded are left to Postgres's ON DELETE CASCADE, 
+    # so SQLAlchemy never has to load them.
     members: Mapped[list["BoardMember"]] = relationship(
-        back_populates="board", cascade="all, delete-orphan"
+        back_populates="board", 
+        cascade="all, delete-orphan", 
+        passive_deletes=True
     )
     columns: Mapped[list["Column"]] = relationship(
-        back_populates="board", cascade="all, delete-orphan", order_by="Column.position"
+        back_populates="board", 
+        cascade="all, delete-orphan", 
+        order_by="Column.position",
+        passive_deletes=True
     )
 
 
@@ -74,7 +81,10 @@ class Column(Base):
     position: Mapped[int]
     board: Mapped[Board] = relationship(back_populates="columns")
     tasks: Mapped[list["Task"]] = relationship(
-        back_populates="columns", cascade="all, delete-orphan", order_by="Task.position"
+        back_populates="column", 
+        cascade="all, delete-orphan", 
+        order_by="Task.position",
+        passive_deletes=True
     )
 
 
@@ -90,4 +100,4 @@ class Task(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
-    columns: Mapped[Column] = relationship(back_populates="tasks")
+    column: Mapped[Column] = relationship(back_populates="tasks")
