@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Board, Column, User
+from app.models import Board, Column, Task, User
 
 
 # Placeholder until real authentication is added
@@ -29,7 +29,15 @@ def get_column_or_404(column_id: int, db: Session = Depends(get_db)) -> Column:
     return column
 
 
+def get_task_or_404(task_id: int, db: Session = Depends(get_db)) -> Task:
+    task = db.get(Task, task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task
+
+
 DbSession = Annotated[Session, Depends(get_db)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
 BoardDep = Annotated[Board, Depends(get_board_or_404)]
 ColumnDep = Annotated[Column, Depends(get_column_or_404)]
+TaskDep = Annotated[Task, Depends(get_task_or_404)]
