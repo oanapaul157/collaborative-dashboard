@@ -1,8 +1,9 @@
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class BoardCreate(BaseModel): 
+class BoardCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
 
 

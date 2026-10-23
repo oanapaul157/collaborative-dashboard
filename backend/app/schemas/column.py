@@ -15,4 +15,3 @@ class ColumnRead(BaseModel):
     name: str
     board_id: int
     position: int
-

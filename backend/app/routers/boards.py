@@ -1,20 +1,15 @@
 from fastapi import APIRouter
 from sqlalchemy import select
 
+from app.deps import BoardDep, CurrentUser, DbSession
 from app.models import Board, BoardMember
 from app.schemas.board import BoardCreate, BoardRead, BoardUpdate
-from app.deps import BoardDep, CurrentUser, DbSession
-
 
 router = APIRouter(prefix="/boards", tags=["boards"])
 
 
 @router.post("", response_model=BoardRead, status_code=201)
-def create_board(
-    data: BoardCreate,
-    db: DbSession,
-    user: CurrentUser
-):
+def create_board(data: BoardCreate, db: DbSession, user: CurrentUser):
     board = Board(name=data.name, owner=user)
     board.members.append(BoardMember(user=user, role="owner"))
     db.add(board)
