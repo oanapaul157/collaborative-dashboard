@@ -17,7 +17,7 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now()
     )
 
-    memberships: Mapped[list["BoardMember"]] = relationship(back_populates="user")
+    memberships: Mapped[list[BoardMember]] = relationship(back_populates="user")
 
 
 class Board(Base):
@@ -36,10 +36,10 @@ class Board(Base):
     owner: Mapped[User] = relationship()
     # cascade="all, delete-orphan": when you delete a Board through the ORM,
     # SQLAlchemy deletes its memberships too (the Python-side twin of ON DELETE CASCADE).
-    members: Mapped[list["BoardMember"]] = relationship(
+    members: Mapped[list[BoardMember]] = relationship(
         back_populates="board", cascade="all, delete-orphan"
     )
-    columns: Mapped[list["Column"]] = relationship(
+    columns: Mapped[list[Column]] = relationship(
         back_populates="board", cascade="all, delete-orphan", order_by="Column.position"
     )
 
@@ -75,7 +75,7 @@ class Column(Base):
     name: Mapped[str] = mapped_column(String(100))
     position: Mapped[int]
     board: Mapped[Board] = relationship(back_populates="columns")
-    tasks: Mapped[list["Task"]] = relationship(
+    tasks: Mapped[list[Task]] = relationship(
         back_populates="columns", cascade="all, delete-orphan", order_by="Task.position"
     )
 
