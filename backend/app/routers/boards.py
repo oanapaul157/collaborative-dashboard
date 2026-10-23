@@ -1,9 +1,10 @@
 from fastapi import APIRouter
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.deps import BoardDep, CurrentUser, DbSession
-from app.models import Board, BoardMember
-from app.schemas.board import BoardCreate, BoardRead, BoardUpdate
+from app.models import Board, BoardMember, Column
+from app.schemas.board import BoardCreate, BoardDetail, BoardRead, BoardUpdate
 
 router = APIRouter(prefix="/boards", tags=["boards"])
 
@@ -41,9 +42,15 @@ def update_board(
     return board
 
 
-@router.get("/{board_id}", response_model=BoardRead)
-def get_board(user: CurrentUser, board: BoardDep):
-    return board
+@router.get("/{board_id}", response_model=BoardDetail)
+def get_board(user: CurrentUser, board: BoardDep, db: DbSession):
+    stmt = (
+        select(Board)
+        .where(Board.id == board.id)
+        .options(selectinload(Board.columns).selectinload(Column.tasks))
+    )
+    board_detail = db.scalars(stmt).one()
+    return board_detail
 
 
 @router.delete("/{board_id}", status_code=204)

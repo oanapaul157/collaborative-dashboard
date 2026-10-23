@@ -1,5 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.task import TaskRead
+
 
 class ColumnCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
@@ -15,3 +17,7 @@ class ColumnRead(BaseModel):
     name: str
     board_id: int
     position: int
+
+
+class ColumnWithTasks(ColumnRead):
+    tasks: list[TaskRead]
