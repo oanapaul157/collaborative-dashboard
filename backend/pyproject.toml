@@ -12,11 +12,16 @@ dependencies = [
 [tool.fastapi]
 entrypoint = "app.main:app"
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
 [tool.ruff.lint.isort]
 known-third-party = ["alembic"]
 known-first-party = ["app"]
 
 [dependency-groups]
 dev = [
+    "pytest>=9.1.1",
     "ruff>=0.17.1",
 ]
