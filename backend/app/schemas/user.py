@@ -10,8 +10,8 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    name: str | None = Field(min_length=2, max_length=100)
-    email: EmailStr | None = Field(max_length=255)
+    name: str | None = Field(default=None, min_length=2, max_length=100)
+    email: EmailStr | None = Field(default=None, max_length=255)
 
 
 class UserRead(BaseModel):
