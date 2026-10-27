@@ -60,6 +60,18 @@ def user(db):
 
 
 @pytest.fixture
+def other_user(db):
+    user = User(
+        email="test_other@exmaple.com",
+        name="Other Test User",
+        password_hash="not-a-real-hash",
+    )
+    db.add(user)
+    db.flush()
+    return user
+
+
+@pytest.fixture
 def auth_headers(user):
     return {"X-User-Id": str(user.id)}
 
